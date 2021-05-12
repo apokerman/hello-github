@@ -1,0 +1,34 @@
+class Solution {
+    public int[] xorQueries(int[] arr, int[][] queries) {
+        
+        int lenY = queries.length;
+        int couts[] = new int[lenY];
+        for(int i = 0;i < lenY;i++){
+            String sum="";
+            int a = queries[i][0];
+            int b = queries[i][1];
+            int left = arr[a];
+            int right = arr[b];
+            String ls = Integer.toBinaryString(left);
+            String rs = Integer.toBinaryString(right);
+            for(int j = 0;j <ls.length();j++){
+                if(ls.charAt(j)==rs.charAt(j))
+                    sum+="1";
+                 else{
+                    sum+="0";
+                }
+            }
+            int sume=Integer.parseInt(sum);                  
+            int decimal=0,p=0;           
+            while(sume!=0)
+            {
+                decimal+=((sume%10)*Math.pow(2,p));
+                sume=sume/10;
+                p++;
+            }            
+            couts[i] = decimal;
+        }
+        return couts;       
+    }
+}
+
