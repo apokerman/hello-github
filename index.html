@@ -1,61 +1,122 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-
-		<title>快播</title>
+		<meta charset="utf-8">
+		<title></title>
 	</head>
 	<body>
-		<video id="vid" width="600px" controls="controls" autoplay="autoplay">
-		</video>
-		<ul>
-			<li href="souce/1.mp4">视频1</li>
-			<li href="souce/2.mp4">视频2</li>
-			<li href="souce/3.mp4">视频3</li>
-			<li href="souce/4.mp4">视频4</li>
-			
-		</ul>
+		<canvas id="can" width="500" height="500"></canvas>
 	</body>
-	<script type="text/javascript">
-		var v = document.getElementById("vid");
-		var lis = document.getElementsByTagName("li");
-		var dataSets = new Array('1.mp4', '2.mp4', '3.mp4','4.mp4');
-		var len = dataSets.length;
-		var s = 0;
-		lis[s].innerHTML = "正在播放" + dataSets[s];
-		console.log(s);
-		v.addEventListener('ended',cont);
-		
-		function cont() {
-			s++;
-			if (s == dataSets.length) {
-				s = 0;
+	<script>
+		var can = document.getElementById("can");
+		var ctx = can.getContext("2d");
+		var color = new Array();
+
+		function bg() {
+			var r = Math.floor(Math.random() * 256);
+			var g = Math.floor(Math.random() * 256);
+			var b = Math.floor(Math.random() * 256);
+			return "rgb(" + r + ',' + g + ',' + b + ")";
+		}
+
+		for (var i = 0; i < 6; i++) {
+			color[i] = bg();
+		}
+
+		for (var c = 0; c < 10; c++) {
+			for (var p = 0; p < 10; p++) {
+				ctx.beginPath();
+				ctx.fillStyle = color[Math.floor(Math.random() * 6)];
+				ctx.moveTo(c * 50 + 25, p * 50 + 25);
+				ctx.arc(c * 50 + 25, p * 50 + 25, 22, 0, 2 * Math.PI);
+				ctx.fill();
+				ctx.closePath();
 			}
-			for (var j = 0; j < lis.length; j++) {
-				if (j == s) {
-					v.src = dataSets[s];
-					lis[s].innerHTML = "正在播放" + dataSets[s];
-				} else {
-					lis[j].innerHTML = "" + dataSets[j];
+		}
+		// https://www.xyhtml5.com/2754.html
+		can.addEventListener("click", function(e) {
+			x = e.offsetX;
+			y = e.offsetY;
+			var imagedata = ctx.getImageData(x, y, 6, 6);
+			getxColor(x, y, imagedata);
+			addColor();
+		});
+		//消除
+		function getxColor(x, y, imagedata) {
+			if (x > 0 && x < 500 && y > 0 && y < 500) {
+				var xcolorR = new Array();
+				var xcolorG = new Array();
+				var xcolorB = new Array();
+				var t = [
+					[0, -1],
+					[0, 1],
+					[-1, 0],
+					[1, 0]
+				];
+				xcolorR[0] = imagedata.data[0];
+				xcolorG[0] = imagedata.data[1];
+				xcolorB[0] = imagedata.data[2];
+
+				for (var i = 0; i < 4; i++) {
+					var imagedatas = ctx.getImageData(x + t[i][0] * 50, y + t[i][1] * 50, 6, 6);
+					if (imagedatas.data[0] == xcolorR[0] && imagedatas.data[1] == xcolorG[0] && imagedatas.data[2] == xcolorB[0] && (
+							imagedatas.data[0] != 0 || imagedatas.data[1] != 0 ||
+							imagedatas.data[2] != 0)) {
+						ctx.clearRect(x - x % 50, y - y % 50, 50, 50);
+						ctx.clearRect(x - x % 50 + t[i][0] * 50, y - y % 50 + t[i][1] * 50, 50, 50);
+						getxColor(x + t[i][0] * 50, y + t[i][1] * 50, imagedatas);
+						
+					}addColor();
 				}
 			}
-			
 		}
-		for (let i = 0; i < lis.length; i++) {
-			lis[i].onclick = function() {
-				for (var j = 0; j < lis.length; j++) {
-					if (lis[j] == this) {
-						v.src = dataSets[j];
-						lis[j].innerHTML = "正在播放" + dataSets[j];
-						s = j;
-					} else {
-						lis[j].innerHTML = "" + dataSets[j];
+		//下滑
+		function addColor() {
+			for (var y = 475; y >= 25; y = y - 50) {
+				for (var x = 25; x <= 475; x = x + 50) {
+					var imagedataed = ctx.getImageData(x, y, 20, 20);
+					if (imagedataed.data[0] == 0 && imagedataed.data[1] == 0 &&
+						imagedataed.data[2] == 0) {
+						//从上方填充
+						// if (y == 25) {
+						// 	ctx.beginPath();
+						// 	ctx.fillStyle = color[Math.floor(Math.random() * 6)];
+						// 	ctx.arc(x, y, 22, 0, 2 * Math.PI);
+						// 	ctx.fill();
+						// 	ctx.closePath();
+						// }else{
+						var i = 1;
+						if ((y - 50 * i) >= 25) {
+							var move=0;
+							var imagedata = ctx.getImageData(x, y - 50 * i, 20, 20);
+							var imagedataes = ctx.getImageData(x - 25, y - 50 * i - 25, 50, 50);
+							if (imagedata.data[0] != 0 || imagedata.data[1] != 0 ||
+								imagedata.data[2] != 0) {
+								var id=setInterval(function(){
+									draw(imagedataes);
+								},1000);
+								function draw(imagedata){
+									if(move == 50){
+										clearInterval(id);
+									}
+									else{
+										move+=10;
+										ctx.clearRect(x-25,y - 50 * i-25,50,50);
+										console.count('move');
+										ctx.putImageData(imagedata,x-25,y+move-25);
+									}
+								}
+							} else if (imagedata.data[0] == 0 && imagedata.data[1] == 0 &&
+								imagedata.data[2] == 0) {
+								i++;
+							}
+						}
+						// }						
 					}
 				}
 			}
 		}
-		
+		// ctx.clearRect(x - 25, y - 50 * i - 25, 50, 50);
+		// ctx.putImageData(imagedataes, x - 25, y - 25);
 	</script>
-
 </html>
