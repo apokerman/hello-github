@@ -1,0 +1,12 @@
+std::unique()函数
+该函数的作用是“去除”容器或者数组中相邻元素的重复出现的元素，注意 
+		 (1) 这里的去除并非真正意义的erase，而是将重复的元素放到容器的末尾，返回值是去重之后的尾地址。 
+		 (2) unique针对的是相邻元素，所以对于顺序顺序错乱的数组成员，或者容器成员，需要先进行排序，可以调用std::sort()函数
+数组去重
+c = (std::unique(a, a + 8) - a );
+向量去重
+std::vector<int> ModuleArr;
+//排序
+std::sort(ModuleArr.begin(), ModuleArr.end());
+//去重
+ModuleArr.erase(unique(ModuleArr.begin(), ModuleArr.end()), ModuleArr.end());
