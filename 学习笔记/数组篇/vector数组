@@ -1,0 +1,7 @@
+1：反转数组
+1234
+4321
+k=2;
+ reverse(nums.begin(),nums.end());4321
+ reverse(nums.begin()+k,nums.end());  1243
+ reverse(nums.begin(),nums.begin()+k); 2134
