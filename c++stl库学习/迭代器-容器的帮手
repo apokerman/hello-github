@@ -1,0 +1,4 @@
+迭代器是容器特有的搜索工具，用于指向容器内的元素.
+vector<int>::iterator iter;例如vector
+vector<int>::iterator iter = ivec.begin();vector迭代器iter指向容器ivec的开头元素，
+vector<int>::iterator iter = ivec.end();vector迭代器iter指向容器ivec的末尾元素的后一个，相当于哨兵。它指向了一个不存在的元素。
