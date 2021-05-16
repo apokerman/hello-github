@@ -7,7 +7,7 @@ k=2;
  reverse(nums.begin(),nums.begin()+k); 2134
 
 
-数组函数的返回值是迭代器iterator调用时type为vector<int>::iterator，引用时使用*，计算时是数值。
+数组函数的返回值是迭代器iterator调用时type为vector<int>::iterator，调用时使用*解引用，++操作是迭代器指向移动。
 for(vector<int>::iterator it1=nums1.begin(),it2=nums2.begin();it1!=nums1.end()&&it2!=nums2.end();)//for循环定义
         {
             if(*it1<*it2 ) it1++;
