@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<section>
+			<h3>用户登录</h3>
+			<hr /> 用户名：
+			<input id="uname" type="text">
+			<br><br> 密码名：
+			<input id="upwd" type="password">
+			<br>
+			<br>
+			<input type="button" id="btSubmit" value="提交登录信息">
+			<input type="button" id="regist" value="注册">
+		</section>
+		<script>
+			//注册后自动输入用户名
+			var j = localStorage['nowregist'];
+			if (j) {
+				uname.value = j;
+				localStorage.removeItem('nowregist');
+			}
+			//登录检查信息是否正确
+			btSubmit.onclick = function() {
+				var i = localStorage.length / 2;
+				for (var i; i > 0; i--) {
+					var n = localStorage['LoginName' + i];
+					var p = localStorage['Loginpw' + i];
+					if (n == uname.value && p == upwd.value) {
+						//此处应该执行异步的登录信息验证....
+						alert('登录成功，1秒钟后跳转回首页');
+						localStorage.setItem('nowlogin', i);
+						//保存当前登录的用户名，可以供后续的其他页面使用	
+						setTimeout(function() {
+							location.href = 'load.html';
+						}, 1000)
+						break;
+					} else if (n == uname.value && p != upwd.value) {
+						alert('密码错误！');
+					} else if (n != uname.value) {
+						alert('用户名不存在！');
+					}
+				}
+				//第一次使用
+				if (localStorage.length == 0) {
+					alert('用户未注册过！');
+				}
+			}
+			//前往注册
+			regist.onclick = function() {
+				location.href = 'regist.html';
+			}
+		</script>
+	</body>
+</html>

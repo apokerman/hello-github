@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<section>
+			<h3>用户注册</h3>
+			<hr /> 用户名：
+			<input id="uname" type="text">
+			<div id="usname"> </div>
+			<br> 密码名：
+			<input id="upwd" type="password">
+			<div id="uspwd"></div>
+			<br> 密码名：
+			<input id="upwd2" type="password">
+			<div id="uspwd2"></div>
+			<br>
+			<input type="button" id="btSubmit" value="提交注册信息">
+		</section>
+		<script>
+			var c = new RegExp();
+			var s = new RegExp();
+			var fg = 0;
+
+			//用户名监视检验
+			uname.addEventListener('input', namelisten);
+
+			function namelisten() {
+				var username = document.getElementById('uname').value;
+				c = /^[A-z][A-z0-9_]*$/;
+				s = /^[A-z0-9_]{8,15}$/;
+				if (!c.test(username)) {
+					usname.innerHTML = "用户名只支持以字母开头，请正确填写!";
+				} else if (!s.test(username)) {
+					usname.innerHTML = "用户名由8-15个英文 数字 下划线组合，请正确填写!";
+				} else if (search()) {
+					usname.innerHTML = "用户名已存在";
+				} else {
+					usname.innerHTML = "用户名符合";
+					fg = 1;
+					return true;
+				}
+			}
+
+			//用户名已存在检查
+			function search() {
+				var i = localStorage.length / 2;
+				for (var i; i > 0; i--) {
+					var x = localStorage['LoginName' + i];
+					if (x == uname.value) return true;
+				}
+				return false;
+			}
+
+			//密码监视检验
+			upwd.addEventListener('input', wdlisten);
+
+			function wdlisten() {
+				var upname = document.getElementById('upwd').value;
+				c = /^[0-9]*$/;
+				s = /^[0-9]{6,8}$/;
+				if (!c.test(upname)) {
+					uspwd.innerHTML = "密码只支持数字，请正确填写!";
+				} else if (!s.test(upname)) {
+					uspwd.innerHTML = "密码需6-8位数字，请正确填写!";
+				} else {
+					uspwd.innerHTML = "密码符合";
+					if (fg == 1) fg = 2;				
+					return true;
+				}
+			}
+
+			upwd2.addEventListener('input', wd2listen);
+
+			function wd2listen() {
+				var upname = document.getElementById('upwd').value;
+				if (upwd.value != upwd2.value) {
+					uspwd2.innerHTML = "密码与上次输入不一致，请重新输入!";
+				} else {
+					uspwd2.innerHTML = "密码符合";
+					if (fg == 2) fg = 3;
+					return true;
+				}
+			}
+			//注册
+			btSubmit.onclick = function() {
+				var flag = localStorage.length / 2 + 1;
+				var n = uname.value;
+				var p = upwd.value;
+				if (fg == 3) {    //满足三步，即可注册
+					alert('注册成功，1秒钟后跳转回首页');
+					localStorage.setItem('nowregist', n);
+					//保存当前注册的key尾数，可以供后续的其他页面使用
+					localStorage['LoginName' + flag] = n;
+					localStorage['Loginpw' + flag] = p;
+					setTimeout(function() {
+						location.href = 'login.html';
+					}, 1000)
+				}
+			}
+		</script>
+	</body>
+</html>
